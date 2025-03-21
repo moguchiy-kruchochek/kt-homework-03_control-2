@@ -1,7 +1,7 @@
 package ru.netology
 
 fun main() {
-    comissionPayment("Mastercard", 400_000, amountTransition = 100_000)
+    comissionPayment("Mastercard", 40, amountTransition = 40_000)
 }
 
 fun comissionPayment(card: String = "Мир", pastTransitionsThisMonth: Int = 0, amountTransition: Int) {
@@ -20,8 +20,13 @@ fun comissionPayment(card: String = "Мир", pastTransitionsThisMonth: Int = 0,
         println("Достигнут месячный лимит переводов, операция блокирована")
     } else {
         if (card == "Mastercard") {
-            if (amountTransition > mastercardLimit) {
-                comission = ((((amountTransition - mastercardLimit) * mastercardComissionRatio) / 100) + 20).toInt()
+            if (pastTransitionsThisMonth > mastercardLimit) {
+                println("Месячный лимит переводов по Mastercard превышен!")
+                comission = (((amountTransition * mastercardComissionRatio) / 100) + 20).toInt()
+            }
+            else if ((amountTransition + pastTransitionsThisMonth) > mastercardLimit) {
+                println("Данный платеж (с учетом предыдущих в текущем месяце) превышает лимит переводов, комиссия расчитывается с суммы превышения.")
+                comission = ((((amountTransition + pastTransitionsThisMonth - mastercardLimit) * mastercardComissionRatio) / 100) + 20).toInt()
             }
         } else if (card == "Visa") {
             comission = (((amountTransition * visaComissionRatio) / 100)).toInt()
